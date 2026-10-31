@@ -1,0 +1,85 @@
+:root {
+  color-scheme: light;
+  --bg: #fff7ed;
+  --ink: #1c1917;
+  --green: #16a34a;
+  --green-dark: #15803d;
+  --orange: #ea580c;
+  --blue: #2563eb;
+  --red: #dc2626;
+  --amber: #f59e0b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+button:focus-visible {
+  outline: 6px solid var(--blue);
+  outline-offset: 4px;
+}
+
+.screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5vh;
+  padding: max(2vh, env(safe-area-inset-top)) max(2vw, env(safe-area-inset-right))
+    max(2vh, env(safe-area-inset-bottom)) max(2vw, env(safe-area-inset-left));
+}
+
+.big-button {
+  min-width: 64px;
+  min-height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.1s ease,
+    background-color 0.15s ease;
+}
+
+.big-button:active {
+  transform: scale(0.94);
+}
+
+.big-button svg {
+  width: 46%;
+  height: 46%;
+  max-width: 96px;
+  max-height: 96px;
+}
