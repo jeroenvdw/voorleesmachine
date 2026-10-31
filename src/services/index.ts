@@ -3,6 +3,7 @@ import type { IOcr } from './ocr/IOcr'
 import type { ITts } from './tts/ITts'
 import { createBrowserCamera } from './camera/browserCamera'
 import { createOpenRouterOcr } from './ocr/openrouterOcr'
+import { createWebSpeechTts, isWebSpeechAvailable } from './tts/webSpeechTts'
 import { createMockCamera } from './mock/mockCamera'
 import { createMockOcr } from './mock/mockOcr'
 import { createMockTts } from './mock/mockTts'
@@ -36,6 +37,6 @@ export function createServices(mock: boolean): Services {
       getApiKey: () => loadSettings().apiKey,
       getModel: () => loadSettings().model,
     }),
-    tts: mockServices.tts,
+    tts: isWebSpeechAvailable() ? createWebSpeechTts() : mockServices.tts,
   }
 }
