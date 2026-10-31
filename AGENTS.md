@@ -33,6 +33,7 @@ Gebruik `npm.cmd` i.p.v. `npm` in PowerShell (execution policy blokkeert `npm.ps
 
 - `src/domain/` — types, state machine en pure logica (uitgebreid unit-getest)
 - `src/services/` — interfaces en implementaties: `camera/`, `ocr/`, `tts/` + `mock/`
+- `src/lib/` — kleine generieke helpers (delay/canvas/blob)
 - `src/components/` — schermen en herbruikbare bouwstenen
 - `src/parents/` — verborgen ouders-instellingen (API-key, model)
 - `e2e/` — Playwright e2e-tests (draaien met `?mock=1`)

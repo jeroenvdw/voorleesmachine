@@ -53,6 +53,24 @@ describe('Voorleesmachine happy flow', () => {
     expect(await screen.findByRole('button', { name: L.takePhoto })).toBeInTheDocument()
   })
 
+  it('probeert een lege pagina automatisch een tweede keer', async () => {
+    const user = userEvent.setup()
+    let calls = 0
+    const ocr = {
+      recognize: async () => {
+        calls += 1
+        return calls === 1 ? '   ' : 'Genoeg tekst om voor te lezen aan het kind.'
+      },
+    }
+    render(<App services={{ ...makeTestServices(), ocr }} />)
+
+    await user.click(screen.getByRole('button', { name: L.takePhoto }))
+    await user.click(await screen.findByRole('button', { name: L.shoot }))
+    await user.click(await screen.findByRole('button', { name: L.readThis }))
+    await screen.findByRole('button', { name: L.pause })
+    expect(calls).toBe(2)
+  })
+
   it('toont een fout bij cameraproblemen', async () => {
     const user = userEvent.setup()
     const broken: Services = { ...makeTestServices(), camera: { open: () => Promise.reject(new Error('geen camera')) } }

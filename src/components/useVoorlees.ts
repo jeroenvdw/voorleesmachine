@@ -56,18 +56,25 @@ export function useVoorlees(services: Services) {
     const image = state.image
     const controller = new AbortController()
     let cancelled = false
-    const run = async () => {
+    const attempt = async (retriesLeft: number): Promise<void> => {
       try {
         const text = await services.ocr.recognize(image.blob, controller.signal)
         if (cancelled) return
-        if (!isValidText(text)) dispatch({ type: 'ocr-failed', error: 'no-text-found' })
-        else dispatch({ type: 'ocr-succeeded', text })
+        if (!isValidText(text)) {
+          if (retriesLeft > 0) {
+            await attempt(retriesLeft - 1)
+            return
+          }
+          dispatch({ type: 'ocr-failed', error: 'no-text-found' })
+          return
+        }
+        dispatch({ type: 'ocr-succeeded', text })
       } catch (error) {
         if (cancelled) return
         dispatch({ type: 'ocr-failed', error: mapOcrErrorToAppError(error) })
       }
     }
-    void run()
+    void attempt(1)
     return () => {
       cancelled = true
       controller.abort()
