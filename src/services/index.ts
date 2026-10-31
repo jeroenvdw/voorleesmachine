@@ -5,7 +5,7 @@ import { createBrowserCamera } from './camera/browserCamera'
 import { createOpenRouterOcr } from './ocr/openrouterOcr'
 import { createWebSpeechTts, isWebSpeechAvailable } from './tts/webSpeechTts'
 import { createMockCamera } from './mock/mockCamera'
-import { createMockOcr } from './mock/mockOcr'
+import { createMockOcr, type MockOcrOptions } from './mock/mockOcr'
 import { createMockTts } from './mock/mockTts'
 import { loadSettings } from '../parents/settings'
 
@@ -23,9 +23,17 @@ export function isMockMode(): boolean {
 export function createMockServices(): Services {
   return {
     camera: createMockCamera(),
-    ocr: createMockOcr(),
+    ocr: createMockOcr(mockOcrOptionsFromUrl()),
     tts: createMockTts(),
   }
+}
+
+function mockOcrOptionsFromUrl(): MockOcrOptions {
+  if (typeof window === 'undefined') return {}
+  const params = new URLSearchParams(window.location.search)
+  if (params.get('ocr') === 'empty') return { errorKind: 'no-text-found' }
+  if (params.get('ocr') === 'fail') return { errorKind: 'failed' }
+  return {}
 }
 
 export function createServices(mock: boolean): Services {
