@@ -9,6 +9,8 @@ export const VOLUME_DEFAULT = 7
 export type AppAction =
   | { type: 'open-camera' }
   | { type: 'close-camera' }
+  | { type: 'camera-failed' }
+  | { type: 'gallery-failed' }
   | { type: 'photo-taken'; image: CapturedImage }
   | { type: 'photo-rejected' }
   | { type: 'photo-confirmed' }
@@ -42,6 +44,12 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, screen: 'camera', error: null }
     case 'close-camera':
       return state.screen === 'camera' ? { ...state, screen: 'home' } : state
+    case 'camera-failed':
+      return state.screen === 'camera'
+        ? { ...state, screen: 'error', error: 'camera-unavailable' }
+        : state
+    case 'gallery-failed':
+      return { ...state, screen: 'error', error: 'bad-image', image: null }
     case 'photo-taken':
       return {
         ...state,

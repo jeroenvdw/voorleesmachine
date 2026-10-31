@@ -109,4 +109,19 @@ describe('appReducer', () => {
     const next = appReducer(reading, { type: 'go-home' })
     expect(next).toEqual(initialState)
   })
+
+  it('gaat naar fout bij cameraproblemen', () => {
+    const inCamera = appReducer(initialState, { type: 'open-camera' })
+    const next = appReducer(inCamera, { type: 'camera-failed' })
+    expect(next.screen).toBe('error')
+    expect(next.error).toBe('camera-unavailable')
+  })
+
+  it('gaat naar fout en wist de foto bij een onleesbare galerij-foto', () => {
+    const inReview = appReducer(initialState, { type: 'photo-taken', image: makeImage('a') })
+    const next = appReducer(inReview, { type: 'gallery-failed' })
+    expect(next.screen).toBe('error')
+    expect(next.error).toBe('bad-image')
+    expect(next.image).toBeNull()
+  })
 })

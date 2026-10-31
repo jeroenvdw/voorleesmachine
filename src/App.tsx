@@ -1,22 +1,71 @@
-export function CameraIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" aria-hidden="true">
-      <path
-        d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1-1.6c.3-.5.8-.8 1.4-.8h3.8c.6 0 1.1.3 1.4.8l1 1.6h1.2A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-8Z"
-        fill="#fff"
-        stroke="none"
-      />
-      <circle cx="12" cy="12.5" r="4.2" fill="none" strokeWidth="2.2" />
-    </svg>
-  )
+import { useMemo, useState } from 'react'
+import { createServices, isMockMode, type Services } from './services'
+import { useVoorlees } from './components/useVoorlees'
+import { HomeScreen } from './components/screens/HomeScreen'
+import { CameraScreen } from './components/screens/CameraScreen'
+import { ReviewScreen } from './components/screens/ReviewScreen'
+import { ProcessingScreen } from './components/screens/ProcessingScreen'
+import { ReadingScreen } from './components/screens/ReadingScreen'
+import { ErrorScreen } from './components/screens/ErrorScreen'
+import { ParentsScreen } from './parents/ParentsScreen'
+
+type AppProps = {
+  services?: Services
 }
 
-export default function App() {
-  return (
-    <main className="screen">
-      <button className="big-button camera-start" style={{ backgroundColor: 'var(--green)' }} aria-label="Foto maken">
-        <CameraIcon />
-      </button>
-    </main>
+export default function App({ services: injectedServices }: AppProps = {}) {
+  const services = useMemo(
+    () => injectedServices ?? createServices(isMockMode()),
+    [injectedServices],
   )
+  const mockMode = injectedServices ? true : isMockMode()
+  const { state, actions } = useVoorlees(services)
+  const [parentsOpen, setParentsOpen] = useState(false)
+
+  if (parentsOpen) return <ParentsScreen onBack={() => setParentsOpen(false)} />
+
+  switch (state.screen) {
+    case 'home':
+      return (
+        <HomeScreen
+          onOpenParents={() => setParentsOpen(true)}
+          actions={actions}
+        />
+      )
+    case 'camera':
+      return (
+        <CameraScreen
+          camera={services.camera}
+          mockMode={mockMode}
+          onPhotoTaken={actions.onPhotoTaken}
+          onCancel={actions.closeCamera}
+          onCameraFailed={actions.onCameraFailed}
+        />
+      )
+    case 'review':
+      return state.image ? (
+        <ReviewScreen
+          image={state.image}
+          onRetake={actions.onPhotoRejected}
+          onConfirm={actions.onPhotoConfirmed}
+          onHome={actions.goHome}
+        />
+      ) : null
+    case 'processing':
+      return <ProcessingScreen onCancel={actions.goHome} />
+    case 'reading':
+      return (
+        <ReadingScreen
+          ttsState={state.ttsState}
+          volume={state.volume}
+          onTogglePause={actions.togglePause}
+          onLouder={actions.volumeUp}
+          onSofter={actions.volumeDown}
+          onNextPage={actions.nextPage}
+          onHome={actions.goHome}
+        />
+      )
+    case 'error':
+      return <ErrorScreen error={state.error} onRetry={actions.retryFromError} onHome={actions.goHome} />
+  }
 }

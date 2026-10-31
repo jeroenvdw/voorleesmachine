@@ -8,6 +8,7 @@ export type AppErrorCode =
   | 'no-internet'
   | 'no-api-key'
   | 'ocr-failed'
+  | 'bad-image'
 
 export type Screen = 'home' | 'camera' | 'review' | 'processing' | 'reading' | 'error'
 
