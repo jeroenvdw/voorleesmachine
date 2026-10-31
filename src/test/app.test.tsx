@@ -79,4 +79,22 @@ describe('Voorleesmachine happy flow', () => {
     await user.click(screen.getByRole('button', { name: L.takePhoto }))
     expect(await screen.findByRole('img', { name: L.errorCamera })).toBeInTheDocument()
   })
+
+  it('toont bij mislukte voorlezing een fout met volgende-pagina-knop', async () => {
+    const user = userEvent.setup()
+    render(<App services={makeTestServices(undefined, { failOnSpeak: true })} />)
+
+    await user.click(screen.getByRole('button', { name: L.takePhoto }))
+    await user.click(await screen.findByRole('button', { name: L.shoot }))
+    await user.click(await screen.findByRole('button', { name: L.readThis }))
+
+    expect(await screen.findByRole('img', { name: L.errorTts })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: L.nextPage })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: L.retry }))
+    expect(await screen.findByRole('img', { name: L.errorTts })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: L.nextPage }))
+    expect(await screen.findByRole('button', { name: L.shoot })).toBeEnabled()
+  })
 })

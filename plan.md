@@ -28,6 +28,8 @@ Dit document beschrijft de gemaakte keuzes, de uitgevoerde stappen (met commits)
 | 10 | Documentatie | `0571171` | AGENTS.md uitgebreid (commands, services, tandwiel) | — |
 | 11 | Dev server op LAN | `0b48bb0`+ | `server.host: true` en `preview.host: true`; app bereikbaar op `http://<LAN-IP>:5173` (bijv. vanaf een gsm) | HTTP 200 op localhost én LAN-IP |
 | 12 | HTTPS voor dev over LAN | — | `npm run dev:https` met `@vitejs/plugin-basic-ssl` (expliciet goedgekeurd): echte camera werkt op `https://<LAN-IP>:5173` na accepteren van het certificaat; e2e draait nog steeds http | HTTPS 200 op localhost én LAN-IP, http geweigerd; lint/typecheck/test/e2e groen |
+| 13 | Zwart camerabeeld fix | `a855f65` | Opgelost: StrictMode startte de camera dubbel; oude aanvraag wiste de live stream. Nu annuleert elke `open()` de vorige op hetzelfde video-element en wist `close()` alleen de eigen stream | 2 nieuwe unit tests voor beide race-scenario's |
+| 14 | TTS-foutstate, tandwiel, wake lock | — | `ttsState: 'failed'` met luidspreker-fout-icoon + grote volgende-pagina-knop (en herstel/thuis) op het leesscherm; `GearIcon` nu echt tandwiel; Screen Wake Lock API houdt het scherm aan zolang de app open is (met herhaalaanvraag bij zichtbaar worden); e2e kreeg eigen poort 5178 (geen conflict meer met de dev-server) | 72 unit tests + 3 e2e groen |
 
 ### Actuele status
 

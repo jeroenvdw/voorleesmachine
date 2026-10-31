@@ -145,6 +145,33 @@ describe('createWebSpeechTts', () => {
     tts.speak('   ', { volume: 1 })
     expect(states).toEqual(['done'])
   })
+
+  it('gaat naar failed bij een synthesefout en negeert late eind-events', () => {
+    const fake = createFakeSynthesis()
+    const tts = createWebSpeechTts({ synthesis: fake.synth, utteranceFactory: fake.factory })
+    const states: string[] = []
+    tts.onStateChange((s) => states.push(s))
+    tts.speak('Verhaal.', { volume: 1 })
+    emit(fake.spoken[0], 'onerror')
+    expect(states).toEqual(['speaking', 'failed'])
+    expect(fake.synth.cancel).toHaveBeenCalled()
+    emit(fake.spoken[0], 'onend')
+    expect(states).toEqual(['speaking', 'failed'])
+  })
+
+  it('kan na een fout opnieuw spreken', () => {
+    const fake = createFakeSynthesis()
+    const tts = createWebSpeechTts({ synthesis: fake.synth, utteranceFactory: fake.factory })
+    const states: string[] = []
+    tts.onStateChange((s) => states.push(s))
+    tts.speak('Verhaal.', { volume: 1 })
+    emit(fake.spoken[0], 'onerror')
+    tts.speak('Nog een keer.', { volume: 1 })
+    expect(fake.spoken.length).toBe(2)
+    expect(states).toEqual(['speaking', 'failed', 'speaking'])
+    emit(fake.spoken[1], 'onend')
+    expect(states.at(-1)).toBe('done')
+  })
 })
 
 function emit(utterance: UtteranceLike, handler: 'onend' | 'onerror'): void {

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { createServices, isMockMode, type Services } from './services'
 import { useVoorlees } from './components/useVoorlees'
+import { useScreenWakeLock } from './components/useWakeLock'
 import { HomeScreen } from './components/screens/HomeScreen'
 import { CameraScreen } from './components/screens/CameraScreen'
 import { ReviewScreen } from './components/screens/ReviewScreen'
@@ -14,6 +15,7 @@ type AppProps = {
 }
 
 export default function App({ services: injectedServices }: AppProps = {}) {
+  useScreenWakeLock()
   const services = useMemo(
     () => injectedServices ?? createServices(isMockMode()),
     [injectedServices],

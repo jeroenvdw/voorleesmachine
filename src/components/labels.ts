@@ -26,4 +26,5 @@ export const L = {
   errorApiKey: 'De geheime sleutel ontbreekt',
   errorOcr: 'Het lezen van de pagina lukt niet',
   errorImage: 'Deze foto kan niet gelezen worden',
+  errorTts: 'Het voorlezen lukt niet',
 } as const

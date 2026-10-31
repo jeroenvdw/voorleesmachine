@@ -1,6 +1,6 @@
 import type { CapturedImage } from './capturedImage'
 
-export type TtsState = 'idle' | 'speaking' | 'paused' | 'done'
+export type TtsState = 'idle' | 'speaking' | 'paused' | 'done' | 'failed'
 
 export type AppErrorCode =
   | 'no-text-found'

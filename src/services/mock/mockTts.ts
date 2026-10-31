@@ -3,10 +3,12 @@ import type { ITts, TtsStateListener } from '../tts/ITts'
 
 export type MockTtsOptions = {
   speakDurationMs?: number
+  failOnSpeak?: boolean
 }
 
 export function createMockTts(options: MockTtsOptions = {}): ITts {
   const speakDurationMs = options.speakDurationMs ?? 5000
+  const failOnSpeak = options.failOnSpeak ?? false
 
   let state: TtsState = 'idle'
   let timer: ReturnType<typeof setTimeout> | null = null
@@ -35,6 +37,10 @@ export function createMockTts(options: MockTtsOptions = {}): ITts {
   return {
     speak(_text, _opts) {
       clearTimer()
+      if (failOnSpeak) {
+        setState('failed')
+        return
+      }
       setState('speaking')
       scheduleFinish()
     },

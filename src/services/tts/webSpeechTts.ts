@@ -93,7 +93,10 @@ export function createWebSpeechTts(options: WebSpeechTtsOptions = {}): ITts {
       if (gen === generation && state === 'speaking') speakChunk(index + 1)
     }
     utterance.onerror = () => {
-      if (gen === generation && state === 'speaking') speakChunk(index + 1)
+      if (gen === generation && state === 'speaking') {
+        synthesis.cancel()
+        setState('failed')
+      }
     }
     synthesis.speak(utterance)
   }

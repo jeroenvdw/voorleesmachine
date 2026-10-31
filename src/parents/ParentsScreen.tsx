@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { DEFAULT_OCR_MODEL, loadSettings, saveSettings } from './settings'
-import { CheckIcon, GearIcon, KeySlashIcon, XIcon } from '../components/icons'
+import { CheckIcon, KeySlashIcon, XIcon } from '../components/icons'
 import { L } from '../components/labels'
 
 export function ParentsScreen({ onBack }: { onBack: () => void }) {
@@ -70,7 +70,7 @@ export function ParentsScreen({ onBack }: { onBack: () => void }) {
           aria-label={L.saveSettings}
           onClick={save}
         >
-          {saved ? <CheckIcon /> : <GearIcon />}
+          <CheckIcon />
         </button>
         <p className="parents-note">De sleutel wordt alleen op dit toestel bewaard en nooit verstuurd, behalve naar OpenRouter bij het voorlezen van een pagina.</p>
       </div>

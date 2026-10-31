@@ -55,6 +55,19 @@ describe('createMockTts', () => {
     expect(states).toEqual([])
   })
 
+  it('gaat naar failed bij failOnSpeak', () => {
+    const tts = createMockTts({ failOnSpeak: true })
+    const states: string[] = []
+    tts.onStateChange((s) => states.push(s))
+    tts.speak('verhaal', { volume: 1 })
+    expect(states).toEqual(['failed'])
+    tts.pause()
+    tts.resume()
+    expect(states).toEqual(['failed'])
+    tts.stop()
+    expect(states).toEqual(['failed', 'idle'])
+  })
+
   it('ignoreert pauze buiten het spreken', () => {
     const tts = createMockTts()
     tts.pause()
