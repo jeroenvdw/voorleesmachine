@@ -24,6 +24,8 @@ Iconen opnieuw genereren (PWA-iconen in `public/icons/`): `powershell -NoProfile
 
 **npm vs. npm.cmd:** in PowerShell op deze machine blokkeert de execution policy `npm.ps1`; gebruik daar altijd `npm.cmd` (dus `npm.cmd run lint`, `npm.cmd test`, …). In andere shells (bash, cmd.exe) en in CI (GitHub Actions draait op Linux) werkt `npm` gewoon. Hetzelfde geldt voor `npx.cmd` i.p.v. `npx` in PowerShell. Vóór elke commit moeten slagen: `npm run lint`, `npm run typecheck` en `npm test`.
 
+**Netwerktoegang:** de dev server (en `vite preview`) luistert op alle interfaces (`server.host: true` in `vite.config.ts`), dus de app is in het lokale netwerk bereikbaar op `http://<LAN-IP>:5173/`, bijvoorbeeld vanaf een gsm. Sta Node.js eventueel toe in Windows Firewall voor privénetwerken. Let op: de camera (`getUserMedia`) en de service worker vereisen een *secure context* — `localhost` telt mee, een http-LAN-IP niet. Via het LAN-IP werkt daarom alleen de mock-modus volledig; voor de echte camera over het netwerk is https nodig (bijv. `@vitejs/plugin-basic-ssl`, `adb reverse` of echte hosting — zie `plan.md`).
+
 ## Services (achterliggende implementaties)
 
 Alle services zitten achter interfaces in `src/services/`; de UI kent alleen de interfaces. Elke service heeft een mock in `src/services/mock/`.

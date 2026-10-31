@@ -26,6 +26,7 @@ Dit document beschrijft de gemaakte keuzes, de uitgevoerde stappen (met commits)
 | 8 | PWA | `9f7e7eb` | Manifest, 4 PWA-iconen via `scripts/make-icons.ps1` (GDI+), handgeschreven `sw.js` met offline-shell, registratie in `main.tsx`, meta-tags | Build bevat alle assets |
 | 9 | E2E + CI | `726d0e8` | 3 Playwright-tests op `?mock=1` (happy flow, geen-tekst-foutpad, PWA-checks); Vitest sluit `e2e/` uit | E2E groen in Chromium |
 | 10 | Documentatie | `0571171` | AGENTS.md uitgebreid (commands, services, tandwiel) | — |
+| 11 | Dev server op LAN | `0b48bb0`+ | `server.host: true` en `preview.host: true`; app bereikbaar op `http://<LAN-IP>:5173` (bijv. vanaf een gsm) | HTTP 200 op localhost én LAN-IP |
 
 ### Actuele status
 
@@ -46,6 +47,8 @@ Volgorde op volgorde van nut; elke stap = eigen commit met groene tests.
    - DoD: publieke URL waarop de app geïnstalleerd kan worden; Lighthouse PWA-audit groen.
 3. **Veldtest met een kind en een echt boek**: controleer foto-hoek, belichting, volumegedrag en of de denk-animatie lang genoeg/kort genoeg voelt; noteer verbeterpunten.
    - DoD: lijstje bevindingen → mini-stapjes in deze lijst.
+4. **HTTPS voor dev over LAN**: de echte camera vereist een secure context, dus op `http://<LAN-IP>` werkt alleen de mock-modus. Opties: `@vitejs/plugin-basic-ssl` (nieuwe dependency → expliciete goedkeuring), `adb reverse tcp:5173 tcp:5173` (gsm via USB-kabel), of echte hosting met https.
+   - DoD: echte camera werkt via een netwerkadres van de gsm uit.
 
 ### Fase B — lees-ervaring (P2)
 
