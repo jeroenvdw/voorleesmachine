@@ -1,5 +1,5 @@
 const CACHE_NAME = 'voorleesmachine-v1'
-const PRECACHE = ['/', '/index.html', '/manifest.webmanifest']
+const PRECACHE = ['./', './index.html', './manifest.webmanifest']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -33,7 +33,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, copy))
           return response
         })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('/index.html'))),
+        .catch(() => caches.match(request).then((cached) => cached || caches.match('./index.html'))),
     )
     return
   }
