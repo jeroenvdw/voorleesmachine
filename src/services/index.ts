@@ -2,9 +2,11 @@ import type { ICamera } from './camera/ICamera'
 import type { IOcr } from './ocr/IOcr'
 import type { ITts } from './tts/ITts'
 import { createBrowserCamera } from './camera/browserCamera'
+import { createOpenRouterOcr } from './ocr/openrouterOcr'
 import { createMockCamera } from './mock/mockCamera'
 import { createMockOcr } from './mock/mockOcr'
 import { createMockTts } from './mock/mockTts'
+import { loadSettings } from '../parents/settings'
 
 export type Services = {
   camera: ICamera
@@ -30,7 +32,10 @@ export function createServices(mock: boolean): Services {
   if (mock) return mockServices
   return {
     camera: createBrowserCamera(),
-    ocr: mockServices.ocr,
+    ocr: createOpenRouterOcr({
+      getApiKey: () => loadSettings().apiKey,
+      getModel: () => loadSettings().model,
+    }),
     tts: mockServices.tts,
   }
 }
