@@ -29,6 +29,7 @@ describe('createOpenRouterOcr', () => {
     const body = JSON.parse(String(init.body))
     expect(body.model).toBe('test-model')
     expect(JSON.stringify(body.messages)).toContain('data:')
+    expect(JSON.stringify(body.messages)).toContain('GEEN_TEKST')
   })
 
   it('gooit geen-sleutel zonder netwerkcall als de key ontbreekt', async () => {
@@ -36,6 +37,41 @@ describe('createOpenRouterOcr', () => {
     const ocr = makeOcr({ getApiKey: () => '', fetchImpl: fetchMock as unknown as typeof fetch })
     await expect(ocr.recognize(new Blob(['foto']))).rejects.toMatchObject({ kind: 'no-api-key' })
     expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('geeft een lege string bij het GEEN_TEKST-sentinel', async () => {
+    const ocr = makeOcr({
+      fetchImpl: vi.fn().mockResolvedValue(jsonResponse({ choices: [{ message: { content: 'GEEN_TEKST' } }] })) as unknown as typeof fetch,
+    })
+    await expect(ocr.recognize(new Blob(['foto']))).resolves.toBe('')
+  })
+
+  it('herkent het sentinel ook met uitleg of markdown eromheen', async () => {
+    const varianten = ['GEEN_TEKST - er staat geen tekst op de foto.', '**GEEN_TEKST**', '  GEEN_TEKST  ']
+    for (const content of varianten) {
+      const ocr = makeOcr({
+        fetchImpl: vi.fn().mockResolvedValue(jsonResponse({ choices: [{ message: { content } }] })) as unknown as typeof fetch,
+      })
+      await expect(ocr.recognize(new Blob(['foto']))).resolves.toBe('')
+    }
+  })
+
+  it('behandelt een volledig leeg antwoord als geen tekst, niet als serverfout', async () => {
+    const ocr = makeOcr({
+      fetchImpl: vi.fn().mockResolvedValue(jsonResponse({ choices: [{ message: { content: '' } }] })) as unknown as typeof fetch,
+    })
+    await expect(ocr.recognize(new Blob(['foto']))).resolves.toBe('')
+  })
+
+  it('geeft gewone tekst die toevallig met GEEN begint gewoon door', async () => {
+    const ocr = makeOcr({
+      fetchImpl: vi.fn().mockResolvedValue(
+        jsonResponse({ choices: [{ message: { content: 'Geen enkele keer durfde de kleine beer in het donker te kijken.' } }] }),
+      ) as unknown as typeof fetch,
+    })
+    await expect(ocr.recognize(new Blob(['foto']))).resolves.toBe(
+      'Geen enkele keer durfde de kleine beer in het donker te kijken.',
+    )
   })
 
   it('behandelt 401 als ontbrekende sleutel', async () => {

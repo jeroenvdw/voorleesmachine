@@ -6,10 +6,14 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 const DEFAULT_TIMEOUT_MS = 60_000
 const MAX_IMAGE_DIMENSION = 1600
 
-const SYSTEM_PROMPT =
-  'Je bent een voorleesmachine voor kinderen. Je krijgt een foto van een pagina uit een kinderboek en haalt daar de voorleestekst uit.'
+const NO_TEXT_SENTINEL = 'GEEN_TEKST'
 
-const USER_PROMPT = `Lees alle tekst van deze boekpagina en geef ALLEEN de voorleestekst terug.
+const SYSTEM_PROMPT =
+  'Je bent een voorleesmachine voor kinderen. Je bekijkt een foto en haalt daar de voorleestekst van een kinderboekpagina uit. Als er geen leesbare voorleestekst op de foto staat, meld je dat met het ene woord GEEN_TEKST.'
+
+const USER_PROMPT = `Bekijk de foto en geef ALLEEN de voorleestekst terug die letterlijk op de foto staat.
+- Verzin niets: gebruik uitsluitend tekst die je echt op de foto ziet.
+- Staat er geen leesbare voorleestekst op (bijvoorbeeld een lege pagina, een wazige of donkere foto, of helemaal geen tekst)? Antwoord dan uitsluitend met GEEN_TEKST.
 - Houd de oorspronkelijke spelling en interpunctie aan.
 - Laat paginanummers, uitgeverstekst, bijschriften bij tekeningen en decortekst weg.
 - Volg de leesvolgorde van de pagina, kolom voor kolom van boven naar beneden.
@@ -84,7 +88,8 @@ export function createOpenRouterOcr(options: OpenRouterOcrOptions): IOcr {
         }
         const data: unknown = await response.json()
         const content = extractContent(data)
-        if (!content) throw new OcrError('failed')
+        if (content === null) throw new OcrError('failed')
+        if (isNoTextResponse(content)) return ''
         return content
       } catch (error) {
         if (error instanceof OcrError) throw error
@@ -99,6 +104,12 @@ function extractContent(data: unknown): string | null {
   const choices = (data as ChatCompletionResponse).choices
   const content = choices?.[0]?.message?.content
   return typeof content === 'string' ? content : null
+}
+
+function isNoTextResponse(content: string): boolean {
+  const cleaned = content.trim().replace(/^[*_`'" -]+|[*_`'" -]+$/g, '')
+  if (!cleaned) return true
+  return cleaned === NO_TEXT_SENTINEL || cleaned.startsWith(NO_TEXT_SENTINEL)
 }
 
 async function blobToDataUrl(image: Blob): Promise<string> {
