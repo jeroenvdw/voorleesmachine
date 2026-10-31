@@ -10,7 +10,8 @@ Lees dit bestand vóór elke taak en volg de afspraken exact op.
 
 | Commando | Wat het doet |
 |---|---|
-| `npm run dev` | Vite dev server (standaard poort 5173) |
+| `npm run dev` | Vite dev server (standaard poort 5173, http) |
+| `npm run dev:https` | Vite dev server met zelfgesigned certificaat (`@vitejs/plugin-basic-ssl`) — nodig voor de echte camera via LAN-IP of gsm |
 | `npm run build` | Typecheck (`tsc -b`) + productiebuild naar `dist/` |
 | `npm run lint` | ESLint over `src/`, `e2e/` en configs (moet foutloos slagen) |
 | `npm run typecheck` | `tsc -b` over alle projecten (moet foutloos slagen) |
@@ -24,7 +25,7 @@ Iconen opnieuw genereren (PWA-iconen in `public/icons/`): `powershell -NoProfile
 
 **npm vs. npm.cmd:** in PowerShell op deze machine blokkeert de execution policy `npm.ps1`; gebruik daar altijd `npm.cmd` (dus `npm.cmd run lint`, `npm.cmd test`, …). In andere shells (bash, cmd.exe) en in CI (GitHub Actions draait op Linux) werkt `npm` gewoon. Hetzelfde geldt voor `npx.cmd` i.p.v. `npx` in PowerShell. Vóór elke commit moeten slagen: `npm run lint`, `npm run typecheck` en `npm test`.
 
-**Netwerktoegang:** de dev server (en `vite preview`) luistert op alle interfaces (`server.host: true` in `vite.config.ts`), dus de app is in het lokale netwerk bereikbaar op `http://<LAN-IP>:5173/`, bijvoorbeeld vanaf een gsm. Sta Node.js eventueel toe in Windows Firewall voor privénetwerken. Let op: de camera (`getUserMedia`) en de service worker vereisen een *secure context* — `localhost` telt mee, een http-LAN-IP niet. Via het LAN-IP werkt daarom alleen de mock-modus volledig; voor de echte camera over het netwerk is https nodig (bijv. `@vitejs/plugin-basic-ssl`, `adb reverse` of echte hosting — zie `plan.md`).
+**Netwerktoegang:** de dev server (en `vite preview`) luistert op alle interfaces (`server.host: true` in `vite.config.ts`), dus de app is in het lokale netwerk bereikbaar op `http://<LAN-IP>:5173/`, bijvoorbeeld vanaf een gsm. Sta Node.js eventueel toe in Windows Firewall voor privénetwerken. Let op: de camera (`getUserMedia`) en de service worker vereisen een *secure context* — `localhost` telt mee, een http-LAN-IP niet. Via `http://<LAN-IP>` werkt daarom alleen de mock-modus volledig. Voor de echte camera over het netwerk: start `npm run dev:https` en open `https://<LAN-IP>:5173/` (self-signed certificaat; accepteer de browserwaarschuwing, daarna werkt de camera). Alternatieven: `adb reverse tcp:5173 tcp:5173` of echte hosting.
 
 ## Services (achterliggende implementaties)
 
