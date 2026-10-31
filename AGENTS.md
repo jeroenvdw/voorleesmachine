@@ -59,6 +59,7 @@ Kinderen hebben deze schermen normaal nooit te zien; zichtbare tekst is hier toe
 - Services (camera / OCR / TTS) zijn altijd achter interfaces in `src/services/`; de UI kent alleen de interfaces. Unit- en e2e-tests gebruiken de mocks uit `src/services/mock/`.
 - UI is volledig icon-only: geen zichtbare tekstlabels in kind-schermen. Elk interactief element krijgt een Nederlandse `aria-label` (toegankelijkheid + testbaarheid). Aanraakvlakken minimaal 64×64 px, voorkeur veel groter.
 - Voordat je commit: `npm run lint`, `npm run typecheck` en `npm test` slagen. Eén commit per afgeronde stap, in het Engels, conventionele stijl (`feat:`, `chore:`, `test:` …).
+- Commit-identiteit: de coding agent commit altijd als `Voorleesmachine <dev@voorleesmachine.local>`, door bij elke commit expliciet `-c user.name="Voorleesmachine" -c user.email="dev@voorleesmachine.local"` mee te geven. Zo blijven agent-commits onderscheiden van menselijke commits (jeroenvdw, via de globale git-config). Niet de globale config voor agent-commits hergebruiken en deze override niet wijzigen.
 - Geheimen (OpenRouter API-key) nooit in code of commits; de key staat uitsluitend in localStorage via het ouders-menu.
 - Geen nieuwe dependencies zonder expliciete opdracht; houd de bundle klein.
 - Foutafhandeling is icon-only: elke fouttoestand heeft een eigen pictogram + grote herstelknop.
