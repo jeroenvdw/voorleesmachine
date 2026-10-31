@@ -1,6 +1,7 @@
 import type { ICamera } from './camera/ICamera'
 import type { IOcr } from './ocr/IOcr'
 import type { ITts } from './tts/ITts'
+import { createBrowserCamera } from './camera/browserCamera'
 import { createMockCamera } from './mock/mockCamera'
 import { createMockOcr } from './mock/mockOcr'
 import { createMockTts } from './mock/mockTts'
@@ -24,6 +25,12 @@ export function createMockServices(): Services {
   }
 }
 
-export function createServices(_mock: boolean): Services {
-  return createMockServices()
+export function createServices(mock: boolean): Services {
+  const mockServices = createMockServices()
+  if (mock) return mockServices
+  return {
+    camera: createBrowserCamera(),
+    ocr: mockServices.ocr,
+    tts: mockServices.tts,
+  }
 }

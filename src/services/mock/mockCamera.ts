@@ -1,4 +1,5 @@
 import { createCapturedImage } from '../../domain/capturedImage'
+import { canvasToBlob } from '../../lib/canvasToBlob'
 import type { ICamera, CameraSession } from '../camera/ICamera'
 
 export type MockCameraOptions = {
@@ -44,15 +45,6 @@ function drawFakeBookPage(ctx: CanvasRenderingContext2D, width: number, height: 
   ctx.beginPath()
   ctx.arc(width * 0.78, height * 0.82, height * 0.09, 0, Math.PI * 2)
   ctx.fill()
-}
-
-function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob) resolve(blob)
-      else reject(new Error('Canvas naar Blob mislukt'))
-    }, 'image/jpeg', 0.9)
-  })
 }
 
 function delay(ms: number): Promise<void> {
