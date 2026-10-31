@@ -6,6 +6,7 @@ import {
   HomeIcon,
   ImageSlashIcon,
   KeySlashIcon,
+  NextPageIcon,
   RedoIcon,
   WifiSlashIcon,
 } from '../icons'
@@ -48,12 +49,15 @@ function errorLabel(code: AppErrorCode | null): string {
 export function ErrorScreen({
   error,
   onRetry,
+  onNextPage,
   onHome,
 }: {
   error: AppErrorCode | null
   onRetry: () => void
+  onNextPage: () => void
   onHome: () => void
 }) {
+  const showNextPage = error !== 'camera-unavailable'
   return (
     <main className="screen error-screen">
       <div className="error-wrap" role="img" aria-label={errorLabel(error)}>
@@ -62,6 +66,11 @@ export function ErrorScreen({
       <button type="button" className="big-button xl btn-green" aria-label={L.retry} onClick={onRetry}>
         <RedoIcon />
       </button>
+      {showNextPage && (
+        <button type="button" className="big-button lg btn-orange" aria-label={L.nextPage} onClick={onNextPage}>
+          <NextPageIcon />
+        </button>
+      )}
       <button type="button" className="big-button md btn-slate" aria-label={L.goHome} onClick={onHome}>
         <HomeIcon />
       </button>

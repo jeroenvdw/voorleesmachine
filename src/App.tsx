@@ -68,6 +68,13 @@ export default function App({ services: injectedServices }: AppProps = {}) {
         />
       )
     case 'error':
-      return <ErrorScreen error={state.error} onRetry={actions.retryFromError} onHome={actions.goHome} />
+      return (
+        <ErrorScreen
+          error={state.error}
+          onRetry={actions.retryFromError}
+          onNextPage={actions.nextPage}
+          onHome={actions.goHome}
+        />
+      )
   }
 }

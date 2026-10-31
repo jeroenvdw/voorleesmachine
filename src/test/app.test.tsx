@@ -37,7 +37,7 @@ describe('Voorleesmachine happy flow', () => {
     expect(await screen.findByRole('button', { name: L.takePhoto })).toBeInTheDocument()
   })
 
-  it('toont fout en herstel bij een niet-sprekende pagina', async () => {
+  it('toont fout en herstel bij een pagina zonder tekst', async () => {
     const user = userEvent.setup()
     render(<App services={makeTestServices({ errorKind: 'no-text-found' })} />)
 
@@ -46,10 +46,11 @@ describe('Voorleesmachine happy flow', () => {
     await user.click(await screen.findByRole('button', { name: L.readThis }))
     expect(await screen.findByRole('img', { name: L.errorNoText })).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: L.retry }))
-    expect(await screen.findByRole('img', { name: L.errorNoText })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: L.nextPage })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: L.nextPage }))
+    expect(await screen.findByRole('button', { name: L.shoot })).toBeEnabled()
 
-    await user.click(screen.getByRole('button', { name: L.goHome }))
+    await user.click(await screen.findByRole('button', { name: L.closeCamera }))
     expect(await screen.findByRole('button', { name: L.takePhoto })).toBeInTheDocument()
   })
 

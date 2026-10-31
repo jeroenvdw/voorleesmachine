@@ -63,9 +63,13 @@ test('een pagina zonder tekst toont een fout met herstel', async ({ page }) => {
   await page.getByRole('button', { name: L.readThis }).click()
 
   await expect(page.getByRole('img', { name: L.errorNoText })).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByRole('button', { name: L.nextPage })).toBeVisible()
   await page.getByRole('button', { name: L.retry }).click()
   await expect(page.getByRole('img', { name: L.errorNoText })).toBeVisible({ timeout: 15_000 })
-  await page.getByRole('button', { name: L.goHome }).click()
+
+  await page.getByRole('button', { name: L.nextPage }).click()
+  await expect(shutter).toBeEnabled()
+  await page.getByRole('button', { name: L.closeCamera }).click()
   await expect(page.getByRole('button', { name: L.takePhoto })).toBeVisible()
 })
 
